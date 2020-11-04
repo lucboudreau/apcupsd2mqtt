@@ -1,0 +1,27 @@
+mqtt:
+  host: 192.168.1.1
+  port: 1883
+  username: user
+  password: password
+  #ca_cert: /etc/ssl/certs/ca-certificates.crt # Uncomment to enable MQTT TLS, update path to appropriate location.
+  #ca_verify: False              # Verify TLS certificate chain and host, disable for testing with self-signed certificates, default to True
+  #topic_prefix: hostname         # All messages will have that prefix added, remove if you dont need this.
+  client_id: apcupsd2mqtt
+  availability_topic: lwt
+
+manager:
+  sensor_config:
+    topic: homeassistant
+    retain: true
+  topic_subscription:
+    update_all:
+      topic: homeassistant/status
+      payload: online
+  command_timeout: 35           # Timeout for worker operations. Can be removed if the default of 35 seconds is sufficient.
+  workers:
+    apcupsd:
+      args:
+        devices:
+          network:  127.0.0.1
+        topic_prefix: apcupsd
+      update_interval: 120

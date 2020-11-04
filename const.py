@@ -1,0 +1,2 @@
+DEFAULT_COMMAND_TIMEOUT = 35  # In seconds
+DEFAULT_PER_DEVICE_TIMEOUT = 8  # In seconds

@@ -1,0 +1,5 @@
+paho-mqtt
+pyyaml
+interruptingcow
+apscheduler
+apcaccess
