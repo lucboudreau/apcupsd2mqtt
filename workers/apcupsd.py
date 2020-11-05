@@ -1,3 +1,4 @@
+from exceptions import DeviceTimeoutError
 from mqtt import MqttMessage, MqttConfigMessage
 from apcaccess import status as apc
 from interruptingcow import timeout
@@ -11,7 +12,7 @@ monitoredAttrs = ["power"]
 
 _LOGGER = logger.get(__name__)
 
-class apcupsdWorker(BaseWorker):
+class ApcupsdWorker(BaseWorker):
     """
     This worker for apcupsd. It creates the sensor entries in
     MQTT for Home Assistant. It supports connection retries.
@@ -22,7 +23,7 @@ class apcupsdWorker(BaseWorker):
             _LOGGER.debug("Adding %s device '%s' (%s)", repr(self), name, ip)
             self.devices[name] = {
                 "ip": ip,
-                "poller": apcupsdPoller(ip),
+                "poller": ApcupsdPoller(ip),
             }
 
     def config(self):
@@ -80,25 +81,15 @@ class apcupsdWorker(BaseWorker):
             try:
                 with timeout(self.command_timeout, exception=DeviceTimeoutError):
                     yield self.update_device_state(name, data["poller"])
-            #except btle.BTLEException as e:
-            #    logger.log_exception(
-            #        _LOGGER,
-            #        "Error during update of %s device '%s' (%s): %s",
-            #        repr(self),
-            #        name,
-            #        data["ip"],
-            #        type(e).__name__,
-            #        suppress=True,
-            #    )
-            #except DeviceTimeoutError:
-            #    logger.log_exception(
-            #        _LOGGER,
-            #        "Time out during update of %s device '%s' (%s)",
-            #        repr(self),
-            #        name,
-            #        data["ip"],
-            #        suppress=True,
-            #    )
+            except DeviceTimeoutError:
+                logger.log_exception(
+                    _LOGGER,
+                    "Time out during update of %s device '%s' (%s)",
+                    repr(self),
+                    name,
+                    data["ip"],
+                    suppress=True,
+                )
 
     def update_device_state(self, name, poller):
         ret = []
@@ -122,7 +113,7 @@ class apcupsdWorker(BaseWorker):
 
         return ret
 
-class apcupsdPoller:
+class ApcupsdPoller:
 
     def __init__(self, ip, maxattempt=4):
         self.ip = ip
@@ -137,22 +128,11 @@ class apcupsdPoller:
 
         attempt = 1
         while attempt < (self.maxattempt + 1) :
-            try:
-                device = apc.get(host=ip) # def get(host="localhost", port=3551, timeout=30)
-                yield device
-                _LOGGER.debug("%s is disconnected ", self.ip)
-                attempt = (self.maxattempt + 1)
-            #except btle.BTLEException as er:
-            #    _LOGGER.debug("failed to connect to %s : " + str(attempt) + "/" + str(self.maxattempt) + " attempt", self.ip)
-            #    if attempt == self.maxattempt :
-            #        yield None
-            #        pass
-            #        return
-            #    else:
-            #        attempt = attempt + 1
-            #        _LOGGER.debug("waiting for next try...")
-            #        time.sleep(1)
-            #        pass
+            
+            device = apc.get(host=self.ip) # def get(host="localhost", port=3551, timeout=30)
+            yield device
+            _LOGGER.debug("%s is disconnected ", self.ip)
+            attempt = (self.maxattempt + 1) 
 
     def readAll(self):
         with self.connected() as device:

@@ -110,6 +110,8 @@ class MqttClient:
     def callbacks_subscription(self, callbacks):
         self.mqttc.on_connect = self.on_connect
 
+        _LOGGER.debug("Connecting to: %s" % self.hostname)
+
         self.mqttc.connect(self.hostname, port=self.port)
 
         for topic, callback in callbacks:

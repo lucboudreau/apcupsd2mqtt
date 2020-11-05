@@ -6,6 +6,9 @@ if ! [ -f '/etc/apcupsd/config.yaml' ]; then
     exit 1
 fi
 
+/sbin/apcupsd
+sleep 5
+
 cd /application
 if [ "$DEBUG" = 'true' ]; then
     echo "Start in debug mode"

@@ -14,4 +14,7 @@ services:
       - TZ=America/New_York
       - DEBUG=true
     network_mode: host
+    devices:
+      - /dev/usb/hiddev0:/dev/usb/hiddev0
     privileged: true
+

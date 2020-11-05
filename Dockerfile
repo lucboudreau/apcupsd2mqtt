@@ -7,7 +7,7 @@ COPY . /application
 WORKDIR /application
 
 RUN chmod +x /application/start.sh && \
-    apk add --no-cache --no-install-recommends apcupsd && \
+    apk add --no-cache apcupsd && \
     pip install -r requirements.txt
 
 VOLUME ["/etc/apcupsd"]
