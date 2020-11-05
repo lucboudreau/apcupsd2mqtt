@@ -10,6 +10,7 @@ services:
     volumes:
       - ./etc/apcupsd:/etc/apcupsd:rw
       - /etc/localtime:/etc/localtime:ro
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
     environment:
       - TZ=America/New_York
       - DEBUG=true

@@ -17,6 +17,7 @@ services:
     volumes:
       - ./etc/apcupsd:/etc/apcupsd:rw
       - /etc/localtime:/etc/localtime:ro
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
     environment:
       - TZ=America/New_York
       - DEBUG=true
@@ -91,6 +92,11 @@ STATFILE /var/log/apcupsd.status
 LOGSTATS off
 DATATIME 0
 ```
+
+
+## Auto shutdown
+
+The docker image can be configured to trigger the graceful shutdown of the host. For this, enable ``privileged`` and share ``/var/run/dbus/system_bus_socket`` through the volume mounts.
 
 
 ## Metrics
