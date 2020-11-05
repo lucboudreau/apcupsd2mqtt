@@ -51,11 +51,11 @@ class ApcupsdWorker(BaseWorker):
             }
 
             if attr == "STATUS":
-                payload.update({"friendly_name":"Status","icon":"mdi:information"})
+                payload.update({"icon":"mdi:information"})
             elif attr == "BCHARGE":
-                payload.update({"friendly_name":"Battery Charge","icon":"mdi:battery-unknown","device_class":"power","unit_of_measurement":"%"})
+                payload.update({"icon":"mdi:battery-unknown","device_class":"power","unit_of_measurement":"%"})
             elif attr == "TIMELEFT":
-                payload.update({"friendly_name":"Time Left","icon":"mdi:timer-sand","unit_of_measurement":"minutes"})
+                payload.update({"icon":"mdi:timer-sand","unit_of_measurement":"minutes"})
 
             ret.append(
                 MqttConfigMessage(
