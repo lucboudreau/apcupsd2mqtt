@@ -66,8 +66,13 @@ _LOGGER.info("Starting")
 global_topic_prefix = settings["mqtt"].get("topic_prefix")
 
 mqtt = MqttClient(settings["mqtt"])
+
+availability_topic = mqtt.availability_topic
+if availability_topic is not None:
+    availability_topic = mqtt.format_topic(availability_topic)
+
 manager = WorkersManager(settings["manager"])
-manager.register_workers(global_topic_prefix, mqtt.format_topic(mqtt.availability_topic))
+manager.register_workers(global_topic_prefix, availability_topic)
 manager.start(mqtt)
 
 running = True
