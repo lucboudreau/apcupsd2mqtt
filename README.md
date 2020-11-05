@@ -1,11 +1,17 @@
 
 ## Yet Another apcupsd2mqtt project
 
-This is a fork of bt-mqtt-gateway from github.com/zewelor. It was hacked to run apcupsd in a docker container and also report metrics on MQTT. The apcupsd process runs on localhost and needs access to the USB device where the APC is connected.
+This is a fork of bt-mqtt-gateway from github.com/zewelor. It was hacked to run apcupsd in a docker container and also report metrics on MQTT. The apcupsd process runs on localhost and needs access to the USB device where the APC UPS is connected.
+
+* Runs apcupsd daemon in the docker container.
+* Connects to MQTT.
+* Adds discovery MQTT messages for Home Assistant to auto configure the sensors.
+* Supports LWT messages for live status.
+* Can gracefully shutdown the host when the UPS is depleted.
 
 ## Docker Compose
 
-For docker compose, use roughly this setup. Make sure to map the USB device correctly. 
+For docker compose, use roughly this setup. Make sure to map the USB device correctly. The privileged attribute and system_bus_socket mount are required for graceful shutdown. Use ``DEBUG=true`` for a more verbose log output in ``docker logs``.
 
 ```
 version: '3.7'
@@ -27,7 +33,7 @@ services:
     privileged: true
 ```
 
-The image allows you to mount a folder at ``/etc/apcupsd`` and this folder must contain two configuration files.
+The image requires you to mount a folder at path ``/etc/apcupsd`` and this folder must contain the two following configuration files.
 
 ### /etc/apcupsd/config.yaml
 
@@ -60,9 +66,9 @@ manager:
 
 ### /etc/apcupsd/apcupsd.conf
 
-This file will configure the local apcupsd process running in the container. Make sure that the DEVICE parameter corresponds to the one you have mapped into docker-compose under devices.
+This file will configure the local apcupsd process running in the container. The full configuration manual of apcupsd is available [here](http://www.apcupsd.org/manual/).
 
-If you can't find a proper configuration file, the minimums below should get you started.
+Make sure that the DEVICE parameter corresponds to the one you have mapped into docker-compose under devices. If you can't find a proper configuration file, the minimums below should get you started.
 
 ```
 UPSCABLE usb
