@@ -8,7 +8,7 @@ import json
 import time
 from contextlib import contextmanager
 
-monitoredAttrs = ["STATUS","BCHARGE","TIMELEFT"]
+monitoredAttrs = ["STATUS","BCHARGE","TIMELEFT","LOADPCT","LINEV","ITEMP","BATTV"]
 
 _LOGGER = logger.get(__name__)
 
@@ -53,9 +53,17 @@ class ApcupsdWorker(BaseWorker):
             if attr == "STATUS":
                 payload.update({"icon":"mdi:information"})
             elif attr == "BCHARGE":
-                payload.update({"icon":"mdi:battery-unknown","device_class":"power","unit_of_measurement":"%"})
+                payload.update({"icon":"mdi:battery-charging","unit_of_measurement":"%"})
             elif attr == "TIMELEFT":
                 payload.update({"icon":"mdi:timer-sand","unit_of_measurement":"minutes"})
+            elif attr == "LOADPCT":
+                payload.update({"icon":"mdi:battery-charging","unit_of_measurement":"%"})
+            elif attr == "LINEV":
+                payload.update({"icon":"mdi:current-ac","unit_of_measurement":"V"})
+            elif attr == "BATTV":
+                payload.update({"icon":"mdi:current-ac","unit_of_measurement":"V"})
+            elif attr == "ITEMP":
+                payload.update({"icon":"mdi:thermometer","unit_of_measurement":"°C"})
 
             ret.append(
                 MqttConfigMessage(
@@ -103,6 +111,14 @@ class ApcupsdWorker(BaseWorker):
                 attrValue = poller.getBCharge()
             elif attr == "TIMELEFT":
                 attrValue = poller.getTimeLeft()
+            elif attr == "LOADPCT":
+                attrValue = poller.getLoadPct()
+            elif attr == "LINEV":
+                attrValue = poller.getLineV()
+            elif attr == "BATTV":
+                attrValue = poller.getBattV()
+            elif attr == "ITEMP":
+                attrValue = poller.getITemp()
 
             ret.append(
                 MqttMessage(
@@ -122,6 +138,10 @@ class ApcupsdPoller:
         self._status = None
         self._bcharge = None
         self._timeleft = None
+        self._loadpct = None
+        self._linev = None
+        self._battv = None
+        self._itemp = None
 
     @contextmanager
     def connected(self):
@@ -153,6 +173,11 @@ class ApcupsdPoller:
         self._status = ups_data.get('STATUS', 'Unknown')
         self._bcharge = float(ups_data.get('BCHARGE', 0.0))
         self._timeleft = float(ups_data.get('TIMELEFT', 0.0))
+        self._loadpct = float(ups_data.get('LOADPCT', 0.0))
+        self._linev = float(ups_data.get('LINEV', 0.0))
+        self._battv = float(ups_data.get('BATTV', 0.0))
+        self._itemp = float(ups_data.get('ITEMP', 0.0))
+        
         return self._status
 
     def getStatus(self):
@@ -163,3 +188,15 @@ class ApcupsdPoller:
 
     def getTimeLeft(self):
         return self._timeleft;
+    
+    def getLoadPct(self):
+        return self._loadpct;
+    
+    def getLineV(self):
+        return self._linev;
+        
+    def getITemp(self):
+        return self._itemp;
+
+    def getBattV(self):
+        return self._battv;
