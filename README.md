@@ -1,9 +1,7 @@
 
 ## Yet Another apcupsd2mqtt project
 
-This is a fork of bt-mqtt-gateway from github.com/zewelor 
-
-It was hacked to run apcupsd in a docker container and also report metrics on MQTT. The apcupsd process runs on localhost and needs access to the USB device where the APC is connected.
+This is a fork of bt-mqtt-gateway from github.com/zewelor. It was hacked to run apcupsd in a docker container and also report metrics on MQTT. The apcupsd process runs on localhost and needs access to the USB device where the APC is connected.
 
 ## Docker Compose
 
@@ -42,25 +40,21 @@ mqtt:
   password: password
   #ca_cert: /etc/ssl/certs/ca-certificates.crt # Uncomment to enable MQTT TLS, update path to appropriate location.
   #ca_verify: False                            # Verify TLS certificate chain and host, disable for testing with self-signed certificates, default to True
-  topic_prefix: home/ups
-  client_id: apcupsd2mqtt
-  availability_topic: LWT
+  topic_prefix: home/ups                       # Prefix sor sensor topics and availability_topic (not auto discovery)
+  client_id: apcupsd2mqtt                      # Just a name. Put anything here.
+  availability_topic: LWT                      # Used for LWT. Common to all sensors. Final topic is {topic_prefix}/availability_topic
 
 manager:
   sensor_config:
-    topic: homeassistant
-    retain: true
-  topic_subscription:
-    update_all:
-      topic: home/ups/apcupsd2mqtt/status
-      payload: online
-  command_timeout: 10           # Timeout for worker operations. Can be removed if the default of 35 seconds is sufficient.
+    topic: homeassistant            # Prefix for HA auto discovery. Final topic is {topic}/{sensor name}
+    retain: true                    # Normally set to true to retain sensor metadata in MQTT.
+  command_timeout: 10               # Timeout for worker operations. Can be removed if the default of 35 seconds is sufficient.
   workers:
-    apcupsd:
+    apcupsd:                        # This maps to worker names. If you wrote your own, add.replace here.
       args:
         devices:
-          SUA750RM1U:  127.0.0.1
-      update_interval: 120
+          SUA750RM1U:  127.0.0.1    # Use unique names here, and put IP here. Port is 3551 by default.
+      update_interval: 120          # How often the values are updated in MQTT, in seconds.
 ```
 
 ### /etc/apcupsd/apcupsd.conf
@@ -98,9 +92,15 @@ LOGSTATS off
 DATATIME 0
 ```
 
+
+## Metrics
+
+Not all of the data available from apcupsd is sent to MQTT at the present. The list of supported values is [here](https://github.com/lucboudreau/apcupsd2mqtt/blob/main/workers/apcupsd.py#L11).
+
 ## License
 
 Licensed under MIT.
 
 Copyright (c) 2018 zewelor
+
 Copyright (c) 2020 lucboudreau

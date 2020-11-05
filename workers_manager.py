@@ -77,7 +77,7 @@ class WorkersManager:
         self._config = config
         self._command_timeout = config.get("command_timeout", DEFAULT_COMMAND_TIMEOUT)
 
-    def register_workers(self, global_topic_prefix):
+    def register_workers(self, global_topic_prefix, availability_topic):
         for (worker_name, worker_config) in self._config["workers"].items():
             module_obj = importlib.import_module("workers.%s" % worker_name)
             klass = getattr(module_obj, "%sWorker" % worker_name.title())
@@ -86,7 +86,7 @@ class WorkersManager:
                 "command_timeout", self._command_timeout
             )
             worker_obj = klass(
-                command_timeout, global_topic_prefix, **worker_config["args"]
+                command_timeout, global_topic_prefix, availability_topic, **worker_config["args"]
             )
 
             if "sensor_config" in self._config and hasattr(worker_obj, "config"):

@@ -48,6 +48,7 @@ class ApcupsdWorker(BaseWorker):
                 "device": device,
                 "force_update": "true",
                 "expire_after": 0,
+                "avty_t": self.availability_topic
             }
 
             if attr == "STATUS":

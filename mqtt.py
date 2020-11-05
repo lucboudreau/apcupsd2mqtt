@@ -26,7 +26,7 @@ class MqttClient:
             self.mqttc.tls_insecure_set(not self.ca_verify)
 
         if self.availability_topic:
-            topic = self._format_topic(self.availability_topic)
+            topic = self.format_topic(self.availability_topic)
             _LOGGER.debug("Setting LWT to: %s" % topic)
             self.mqttc.will_set(topic, payload=LWT_OFFLINE, retain=True)
 
@@ -36,7 +36,7 @@ class MqttClient:
 
         for m in messages:
             if m.use_global_prefix:
-                topic = self._format_topic(m.topic)
+                topic = self.format_topic(m.topic)
             else:
                 topic = m.topic
             self.mqttc.publish(topic, m.payload, retain=m.retain)
@@ -115,7 +115,7 @@ class MqttClient:
         self.mqttc.connect(self.hostname, port=self.port)
 
         for topic, callback in callbacks:
-            topic = self._format_topic(topic)
+            topic = self.format_topic(topic)
             _LOGGER.debug("Subscribing to: %s" % topic)
             self.mqttc.message_callback_add(topic, callback)
             self.mqttc.subscribe(topic)
@@ -132,7 +132,7 @@ class MqttClient:
                 ]
             )
 
-    def _format_topic(self, topic):
+    def format_topic(self, topic):
         return "{}/{}".format(self.topic_prefix, topic) if self.topic_prefix else topic
 
 

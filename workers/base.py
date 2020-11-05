@@ -1,9 +1,10 @@
 import logger
 
 class BaseWorker:
-    def __init__(self, command_timeout, global_topic_prefix, **kwargs):
+    def __init__(self, command_timeout, global_topic_prefix, availability_topic, **kwargs):
         self.command_timeout = command_timeout
         self.global_topic_prefix = global_topic_prefix
+        self.availability_topic = availability_topic
         self.topic_prefix = None
         for arg, value in kwargs.items():
             setattr(self, arg, value)

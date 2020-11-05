@@ -67,7 +67,7 @@ global_topic_prefix = settings["mqtt"].get("topic_prefix")
 
 mqtt = MqttClient(settings["mqtt"])
 manager = WorkersManager(settings["manager"])
-manager.register_workers(global_topic_prefix)
+manager.register_workers(global_topic_prefix, mqtt.format_topic(mqtt.availability_topic))
 manager.start(mqtt)
 
 running = True
