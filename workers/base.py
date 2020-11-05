@@ -4,6 +4,7 @@ class BaseWorker:
     def __init__(self, command_timeout, global_topic_prefix, **kwargs):
         self.command_timeout = command_timeout
         self.global_topic_prefix = global_topic_prefix
+        self.topic_prefix = None
         for arg, value in kwargs.items():
             setattr(self, arg, value)
         self._setup()
@@ -12,12 +13,11 @@ class BaseWorker:
         return
 
     def format_discovery_topic(self, mac, *sensor_args):
-        node_id = mac.replace(":", "-")
         object_id = "_".join([repr(self), *sensor_args])
-        return "{}/{}".format(node_id, object_id)
+        return object_id
 
     def format_discovery_id(self, mac, *sensor_args):
-        return "bt-mqtt-gateway/{}".format(
+        return "apcupsd2mqtt/{}".format(
             self.format_discovery_topic(mac, *sensor_args)
         )
 
@@ -25,7 +25,9 @@ class BaseWorker:
         return "_".join([repr(self), *sensor_args])
 
     def format_topic(self, *topic_args):
-        return "/".join([self.topic_prefix, *topic_args])
+        if self.topic_prefix:
+            return "/".join([self.topic_prefix, *topic_args])
+        return "/".join([*topic_args])
 
     def format_prefixed_topic(self, *topic_args):
         topic = self.format_topic(*topic_args)

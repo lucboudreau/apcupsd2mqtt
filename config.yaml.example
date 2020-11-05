@@ -4,10 +4,10 @@ mqtt:
   username: user
   password: password
   #ca_cert: /etc/ssl/certs/ca-certificates.crt # Uncomment to enable MQTT TLS, update path to appropriate location.
-  #ca_verify: False              # Verify TLS certificate chain and host, disable for testing with self-signed certificates, default to True
-  #topic_prefix: hostname         # All messages will have that prefix added, remove if you dont need this.
+  #ca_verify: False                            # Verify TLS certificate chain and host, disable for testing with self-signed certificates, default to True
+  topic_prefix: home/ups
   client_id: apcupsd2mqtt
-  availability_topic: lwt
+  availability_topic: LWT
 
 manager:
   sensor_config:
@@ -15,13 +15,12 @@ manager:
     retain: true
   topic_subscription:
     update_all:
-      topic: homeassistant/status
+      topic: home/ups/apcupsd2mqtt/status
       payload: online
-  command_timeout: 35           # Timeout for worker operations. Can be removed if the default of 35 seconds is sufficient.
+  command_timeout: 10           # Timeout for worker operations. Can be removed if the default of 35 seconds is sufficient.
   workers:
     apcupsd:
       args:
         devices:
-          network:  127.0.0.1
-        topic_prefix: apcupsd
+          SUA750RM1U:  127.0.0.1
       update_interval: 120

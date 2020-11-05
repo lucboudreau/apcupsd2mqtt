@@ -8,7 +8,7 @@ import json
 import time
 from contextlib import contextmanager
 
-monitoredAttrs = ["power"]
+monitoredAttrs = ["STATUS","BCHARGE","TIMELEFT"]
 
 _LOGGER = logger.get(__name__)
 
@@ -37,7 +37,6 @@ class ApcupsdWorker(BaseWorker):
         device = {
             "identifiers": [ip, self.format_discovery_id(ip, name)],
             "manufacturer": "APC",
-            "model": "Unknown",
             "name": self.format_discovery_name(name),
         }
 
@@ -47,18 +46,16 @@ class ApcupsdWorker(BaseWorker):
                 "state_topic": self.format_prefixed_topic(name, attr),
                 "name": self.format_discovery_name(name, attr),
                 "device": device,
+                "force_update": "true",
+                "expire_after": 0,
             }
 
-            if attr == "power":
-                payload.update({"unit_of_measurement": "W"})
-                
-                # payload.update({"icon": "mdi:water", "unit_of_measurement": "%"})
-            #elif attr == "temperature":
-            #    payload.update(
-            #        {"device_class": "temperature", "unit_of_measurement": "°C"}
-            #    )
-            #elif attr == ATTR_BATTERY:
-            #    payload.update({"device_class": "battery", "unit_of_measurement": "V"})
+            if attr == "STATUS":
+                payload.update({"friendly_name":"Status","icon":"mdi:information"})
+            elif attr == "BCHARGE":
+                payload.update({"friendly_name":"Battery Charge","icon":"mdi:battery-unknown","device_class":"power","unit_of_measurement":"%"})
+            elif attr == "TIMELEFT":
+                payload.update({"friendly_name":"Time Left","icon":"mdi:timer-sand","unit_of_measurement":"minutes"})
 
             ret.append(
                 MqttConfigMessage(
@@ -95,15 +92,18 @@ class ApcupsdWorker(BaseWorker):
         ret = []
         if poller.readAll() is None :
             return ret
+
         for attr in monitoredAttrs:
 
             attrValue = None
-            if attr == "power":
-                attrValue = poller.getPower()
-            # elif attr == "temperature":
-            #     attrValue = poller.getTemperature()
-            # elif attr == ATTR_BATTERY:
-            #     attrValue = poller.getBattery()
+
+            if attr == "STATUS":
+                attrValue = poller.getStatus()
+            elif attr == "BCHARGE":
+                attrValue = poller.getBCharge()
+            elif attr == "TIMELEFT":
+                attrValue = poller.getTimeLeft()
+
             ret.append(
                 MqttMessage(
                     topic=self.format_topic(name, attr),
@@ -119,9 +119,9 @@ class ApcupsdPoller:
         self.ip = ip
         self.maxattempt = maxattempt
 
-        self._power = None
-        #self._humidity = None
-        #self._battery = None
+        self._status = None
+        self._bcharge = None
+        self._timeleft = None
 
     @contextmanager
     def connected(self):
@@ -140,24 +140,26 @@ class ApcupsdPoller:
                 return None
 
             self.getData(device)
-            power = self.getPower()
-
-            _LOGGER.debug("successfully read %d", power)
+            status = self.getStatus()
 
             return {
-                "power": power
-                #"humidity": humidity,
-                #"battery": battery,
+                "STATUS": status
             }
 
     def getData(self, device):
         ups_data = apc.parse(device, strip_units=True)
         _LOGGER.debug("ups data: %s", ups_data)
-        max_watts = float(ups_data.get('NOMPOWER', 0.0))
-        current_percent = float(ups_data.get('LOADPCT', 0.0))
-        current_watts = ((max_watts*current_percent)/100)
-        self._power = current_watts
-        return self._power
+        
+        self._status = ups_data.get('STATUS', 'Unknown')
+        self._bcharge = float(ups_data.get('BCHARGE', 0.0))
+        self._timeleft = float(ups_data.get('TIMELEFT', 0.0))
+        return self._status
 
-    def getPower(self):
-        return self._power;
+    def getStatus(self):
+        return self._status;
+
+    def getBCharge(self):
+        return self._bcharge;
+
+    def getTimeLeft(self):
+        return self._timeleft;

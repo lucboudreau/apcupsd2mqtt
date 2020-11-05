@@ -3,8 +3,8 @@ import json
 import paho.mqtt.client as mqtt
 import logger
 
-LWT_ONLINE = "online"
-LWT_OFFLINE = "offline"
+LWT_ONLINE = "Online"
+LWT_OFFLINE = "Offline"
 _LOGGER = logger.get(__name__)
 
 
