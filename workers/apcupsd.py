@@ -8,7 +8,7 @@ import json
 import time
 from contextlib import contextmanager
 
-monitoredAttrs = ["STATUS","BCHARGE","TIMELEFT","LOADPCT","LINEV","ITEMP","BATTV"]
+monitoredAttrs = ["STATUS","BCHARGE","TIMELEFT","LOADPCT","LINEV","ITEMP","BATTV","OUTPUTV","NOMOUTV","NOMBATTV","LOTRANS","HITRANS"]
 
 _LOGGER = logger.get(__name__)
 
@@ -61,9 +61,19 @@ class ApcupsdWorker(BaseWorker):
             elif attr == "LINEV":
                 payload.update({"icon":"mdi:current-ac","unit_of_measurement":"V"})
             elif attr == "BATTV":
-                payload.update({"icon":"mdi:current-ac","unit_of_measurement":"V"})
+                payload.update({"icon":"mdi:current-dc","unit_of_measurement":"V"})
             elif attr == "ITEMP":
                 payload.update({"icon":"mdi:thermometer","unit_of_measurement":"°C"})
+            elif attr == "OUTPUTV":
+                payload.update({"icon":"mdi:current-ac","unit_of_measurement":"V"})
+            elif attr == "NOMOUTV":
+                payload.update({"icon":"mdi:current-ac","unit_of_measurement":"V"})
+            elif attr == "NOMBATTV":
+                payload.update({"icon":"mdi:current-dc","unit_of_measurement":"V"})
+            elif attr == "LOTRANS":
+                payload.update({"icon":"mdi:current-ac","unit_of_measurement":"V"})
+            elif attr == "HITRANS":
+                payload.update({"icon":"mdi:current-ac","unit_of_measurement":"V"})
 
             ret.append(
                 MqttConfigMessage(
@@ -119,6 +129,16 @@ class ApcupsdWorker(BaseWorker):
                 attrValue = poller.getBattV()
             elif attr == "ITEMP":
                 attrValue = poller.getITemp()
+            elif attr == "OUTPUTV":
+                attrValue = poller.getOutputV()
+            elif attr == "NOMOUTV":
+                attrValue = poller.getNomOutV()
+            elif attr == "NOMBATTV":
+                attrValue = poller.getNomBattV()
+            elif attr == "LOTRANS":
+                attrValue = poller.getLoTrans()
+            elif attr == "HITRANS":
+                attrValue = poller.getHiTrans()
 
             ret.append(
                 MqttMessage(
@@ -142,6 +162,11 @@ class ApcupsdPoller:
         self._linev = None
         self._battv = None
         self._itemp = None
+        self._outputv = None
+        self._nomoutv = None
+        self._nombattv = None
+        self._lotrans = None
+        self._hitrans = None
 
     @contextmanager
     def connected(self):
@@ -177,6 +202,11 @@ class ApcupsdPoller:
         self._linev = float(ups_data.get('LINEV', 0.0))
         self._battv = float(ups_data.get('BATTV', 0.0))
         self._itemp = float(ups_data.get('ITEMP', 0.0))
+        self._outputv = float(ups_data.get('OUTPUTV', 0.0))
+        self._nomoutv = float(ups_data.get('NOMOUTV', 0.0))
+        self._nombattv = float(ups_data.get('NOMBATTV', 0.0))
+        self._lotrans = float(ups_data.get('LOTRANS', 0.0))
+        self._hitrans = float(ups_data.get('HITRANS', 0.0))
         
         return self._status
 
@@ -200,3 +230,18 @@ class ApcupsdPoller:
 
     def getBattV(self):
         return self._battv;
+    
+    def getOutputV(self):
+        return self._outputv;
+    
+    def getNomOutV(self):
+        return self._nomoutv;
+    
+    def getNomBattV(self):
+        return self._nombattv;
+    
+    def getLoTrans(self):
+        return self._lotrans;
+    
+    def getHiTrans(self):
+        return self._hitrans;
