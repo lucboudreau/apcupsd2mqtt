@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# This shell script if placed in /etc/apcupsd
+# will be called by /etc/apcupsd/apccontrol before
+# apcupsd kills the power in the UPS. You probably
+# need to edit this to mount read-only /usr and /var,
+# otherwise apcupsd will not run.
+
+# Choose one of this solution
+#mount -n -o ro /usr
+#mount -n -o ro /var
+#
+#mount | awk '/ext2/ { print $3 }' | while read line; do
+#	mount -n -o ro,remount $line
+#done
+#mount | awk '/ext3/ { print $3 }' | while read line; do
+#	mount -n -o ro,remount $line
+#done
+#mount | awk '/reiserfs/ { print $3 }' | while read line; do
+#	mount -n -o ro,remount $line
+#done
+
+exit 0

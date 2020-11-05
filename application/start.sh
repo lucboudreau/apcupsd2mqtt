@@ -2,10 +2,11 @@
 
 if ! [ -f '/etc/apcupsd/config.yaml' ]; then
     echo "There is no config.yaml! An example is created."
-	cp /application/config.yaml.example /etc/apcupsd/config.yaml.example
+	cp /application/config.yaml.example /etc/apcupsd/config.yaml
     exit 1
 fi
 
+/sbin/apcupsd --version
 /sbin/apcupsd
 sleep 5
 

@@ -37,7 +37,9 @@ The image requires you to mount a folder at path ``/etc/apcupsd`` and this folde
 
 ### /etc/apcupsd/config.yaml
 
-Here we configure the MQTT gateway. Update the MQTT server settings with yours. The default settings should work for Home Assistant discovery under the topic ``homeassistant``. Adjust as necessary.
+Here we configure the MQTT gateway. Update the MQTT server settings with yours. The default settings should work for Home Assistant discovery under the topic ``homeassistant``.
+
+When you first start the container, if no file named ``/etc/apcupsd/config.yaml`` is found, one will be created by copying the sample from ``/application/config.yaml.example``. This default file will most likely not work. It will need to be edited. Stop the container, and make the changes needed as described below. If you are using an external mount, you may need to copy the files over first.
 
 ```
 mqtt:
@@ -68,36 +70,7 @@ manager:
 
 This file will configure the local apcupsd process running in the container. The full configuration manual of apcupsd is available [here](http://www.apcupsd.org/manual/).
 
-Make sure that the DEVICE parameter corresponds to the one you have mapped into docker-compose under devices. If you can't find a proper configuration file, the minimums below should get you started.
-
-```
-UPSCABLE usb
-UPSTYPE usb
-DEVICE /dev/usb/hiddev0
-LOCKFILE /var/lock
-SCRIPTDIR /etc/apcupsd
-PWRFAILDIR /etc/apcupsd
-NOLOGINDIR /etc
-ONBATTERYDELAY 6
-BATTERYLEVEL 5
-MINUTES 3
-TIMEOUT 0
-ANNOY 300
-ANNOYDELAY 60
-NOLOGON disable
-KILLDELAY 0
-NETSERVER on
-NISIP 127.0.0.1
-NISPORT 3551
-EVENTSFILE /var/log/apcupsd.events
-EVENTSFILEMAX 10
-UPSCLASS standalone
-UPSMODE disable
-STATTIME 0
-STATFILE /var/log/apcupsd.status
-LOGSTATS off
-DATATIME 0
-```
+Make sure that the DEVICE parameter corresponds to the one you have mapped into docker-compose under devices. The project ocntains a set of default files, but you may need to copy them manually depending on your final docker-compose configuration. See the folder ``etc/apcupsd`` for the sample files.
 
 
 ## Auto shutdown
