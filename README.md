@@ -7,7 +7,7 @@ This is a fork of bt-mqtt-gateway from github.com/zewelor. It was hacked to run 
 * Connects to MQTT.
 * Adds discovery MQTT messages for Home Assistant to auto configure the sensors.
 * Supports LWT messages for live status.
-* Can gracefully shutdown the host when the UPS is depleted.
+* Can gracefully shutdown the host when the UPS is depleted. (not working)
 
 ## Docker Compose
 
@@ -73,14 +73,14 @@ This file will configure the local apcupsd process running in the container. The
 Make sure that the DEVICE parameter corresponds to the one you have mapped into docker-compose under devices. The project ocntains a set of default files, but you may need to copy them manually depending on your final docker-compose configuration. See the folder ``etc/apcupsd`` for the sample files.
 
 
-## Auto shutdown
+## Auto shutdown (not working)
 
 The docker image can be configured to trigger the graceful shutdown of the host. For this, enable ``privileged`` and share ``/var/run/dbus/system_bus_socket`` through the volume mounts.
 
 
 ## Metrics
 
-Not all of the data available from apcupsd is sent to MQTT at the present. The list of supported values is [here](https://github.com/lucboudreau/apcupsd2mqtt/blob/main/workers/apcupsd.py#L11).
+Not all of the data available from apcupsd is sent to MQTT at the present. The list of supported values is [here](https://github.com/lucboudreau/apcupsd2mqtt/blob/main/application/workers/apcupsd.py#L11).
 
 ## License
 
