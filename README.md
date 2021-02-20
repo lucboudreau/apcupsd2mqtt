@@ -9,6 +9,10 @@ This is a fork of bt-mqtt-gateway from github.com/zewelor. It was hacked to run 
 * Supports LWT messages for live status.
 * Can gracefully shutdown the host when the UPS is depleted. (not working)
 
+## Project Status
+
+[![CodeQL](https://github.com/lucboudreau/apcupsd2mqtt/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/lucboudreau/apcupsd2mqtt/actions/workflows/codeql-analysis.yml)
+
 ## Docker Compose
 
 For docker compose, use roughly this setup. Make sure to map the USB device correctly. The privileged attribute and system_bus_socket mount are required for graceful shutdown. Use ``DEBUG=true`` for a more verbose log output in ``docker logs``.
