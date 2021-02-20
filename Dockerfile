@@ -1,4 +1,4 @@
-FROM python:3.8-alpine3.11
+FROM python:3.8-alpine
 
 ENV DEBUG false
 
@@ -7,6 +7,7 @@ COPY ./application /application
 
 WORKDIR /application
 RUN chmod +x /application/start.sh && \
+    apk upgrade --no-cache && \
     apk add --no-cache apcupsd && \
     pip install -r requirements.txt
 
