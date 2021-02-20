@@ -11,9 +11,10 @@ This is a fork of bt-mqtt-gateway from github.com/zewelor. It was hacked to run 
 
 ## Project Status
 
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/lucboudreau/apcupsd2mqtt)
-
-[![CodeQL](https://github.com/lucboudreau/apcupsd2mqtt/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/lucboudreau/apcupsd2mqtt/actions/workflows/codeql-analysis.yml)
+Scan | Status
+------------ | -------------
+[Docker Hub](https://hub.docker.com/r/lucboudreau/apcupsd2mqtt) | ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/lucboudreau/apcupsd2mqtt)
+[GitHub Scans](https://github.com/lucboudreau/apcupsd2mqtt/actions/workflows/codeql-analysis.yml) | [![CodeQL](https://github.com/lucboudreau/apcupsd2mqtt/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/lucboudreau/apcupsd2mqtt/actions/workflows/codeql-analysis.yml)
 
 ## Docker Compose
 
