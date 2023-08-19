@@ -65,7 +65,7 @@ jobs:
       - name: Log in to the Container registry 📦
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.GITHUB_REGISTRY }}
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -73,7 +73,7 @@ jobs:
         uses: snyk/actions/docker@master
         continue-on-error: true
         with:
-          image: ${{ env.GITHUB_REGISTRY }}/${{ env.GITHUB_REPOSITORY }}:${{ env.DOCKER_IMAGE_TAG }}
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.REF_NAME }}
           args: --file=Dockerfile --severity-threshold=high --sarif-file-output=snyk.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
