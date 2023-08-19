@@ -23,7 +23,7 @@ class BaseWorker:
         )
 
     def format_discovery_name(self, *sensor_args):
-        return " ".join([*sensor_args])
+        return [*sensor_args].pop()
 
     def format_topic(self, *topic_args):
         if self.topic_prefix:
