@@ -24,7 +24,7 @@ For docker compose, use roughly this setup. Make sure to map the USB device corr
 version: '3.7'
 services:
   apcupsd2mqtt:
-    image: lucboudreau/apcupsd2mqtt
+    image: ghcr.io/lucboudreau/apcupsd2mqtt:release
     container_name: apcupsd2mqtt
     restart: unless-stopped
     volumes:
