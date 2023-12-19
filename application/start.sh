@@ -13,11 +13,11 @@ sleep 5
 cd /application
 if [ "$DEBUG" = 'true' ]; then
     echo "Start in debug mode"
-    python3 ./gateway.py -d
+    /application/.venv/bin/python ./gateway.py -d
     status=$?
     echo "Gateway died..."
     exit $status
 else
     echo "Start in normal mode"
-    python3 ./gateway.py
+    /application/.venv/bin/python ./gateway.py
 fi
